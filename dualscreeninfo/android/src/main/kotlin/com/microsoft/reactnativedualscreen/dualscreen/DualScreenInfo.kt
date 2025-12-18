@@ -20,12 +20,13 @@ const val FEATURE_NAME = "com.microsoft.device.display.displaymask"
 class DualScreenInfo constructor(context: ReactApplicationContext) : ReactContextBaseJavaModule(context), LifecycleEventListener  {
 	private val mDisplayMask: DisplayMask?
 		get() {
-			return if(currentActivity != null && isDualScreenDevice) DisplayMask.fromResourcesRect(currentActivity) else null
+			val activity = reactApplicationContext.currentActivity
+			return if(activity != null && isDualScreenDevice) DisplayMask.fromResourcesRect(activity) else null
 		}
 	private val rotation: Int
 		get() {
-			val wm = currentActivity?.getSystemService(Context.WINDOW_SERVICE) as WindowManager?
-			return currentActivity?.display?.rotation ?: Surface.ROTATION_0
+			val wm = reactApplicationContext.currentActivity?.getSystemService(Context.WINDOW_SERVICE) as WindowManager?
+			return reactApplicationContext.currentActivity?.display?.rotation ?: Surface.ROTATION_0
 		}
 	private val hinge: Rect
 		get() {
@@ -38,21 +39,21 @@ class DualScreenInfo constructor(context: ReactApplicationContext) : ReactContex
 	private val mStatusBarHeight: Int
 		@RequiresApi(Build.VERSION_CODES.R)
 		get() {
-			val stableInsetTop = currentActivity?.window?.decorView?.rootView?.rootWindowInsets?.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())?.top
+			val stableInsetTop = reactApplicationContext.currentActivity?.window?.decorView?.rootView?.rootWindowInsets?.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())?.top
 			return stableInsetTop ?: 0
 		}
 
 	private val mBottomNavBarHeight: Int
 		@RequiresApi(Build.VERSION_CODES.R)
 		get() {
-			val stableInsetBottom = currentActivity?.window?.decorView?.rootView?.rootWindowInsets?.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())?.bottom
+			val stableInsetBottom = reactApplicationContext.currentActivity?.window?.decorView?.rootView?.rootWindowInsets?.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())?.bottom
 			return stableInsetBottom ?: 0
 		}
 
 	private val mSideNavBarHeight: Int
 		@RequiresApi(Build.VERSION_CODES.R)
 		get() {
-			val stableInsetRight = currentActivity?.window?.decorView?.rootView?.rootWindowInsets?.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())?.right
+			val stableInsetRight = reactApplicationContext.currentActivity?.window?.decorView?.rootView?.rootWindowInsets?.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())?.right
 			return stableInsetRight ?: 0
 		}
 
@@ -94,7 +95,7 @@ class DualScreenInfo constructor(context: ReactApplicationContext) : ReactContex
 	private val windowRect: Rect
 		get() {
 			val windowRect = Rect()
-			val rootView: View? = currentActivity?.window?.decorView?.rootView
+			val rootView: View? = reactApplicationContext.currentActivity?.window?.decorView?.rootView
 			rootView?.getDrawingRect(windowRect)
 			return windowRect
 		}
@@ -125,12 +126,12 @@ class DualScreenInfo constructor(context: ReactApplicationContext) : ReactContex
     }
 
 	override fun onHostResume() {
-		val rootView: View? = currentActivity?.window?.decorView?.rootView
+		val rootView: View? = reactApplicationContext.currentActivity?.window?.decorView?.rootView
 		rootView?.addOnLayoutChangeListener(onLayoutChange)
 	}
 
 	override fun onHostPause() {
-		val rootView: View? = currentActivity?.window?.decorView?.rootView
+		val rootView: View? = reactApplicationContext.currentActivity?.window?.decorView?.rootView
 		rootView?.removeOnLayoutChangeListener(onLayoutChange)
 	}
 
