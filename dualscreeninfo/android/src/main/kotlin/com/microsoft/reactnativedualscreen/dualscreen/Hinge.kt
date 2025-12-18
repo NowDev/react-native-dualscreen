@@ -23,8 +23,8 @@ class Hinge(context: Context) : View(context) {
             return rect
         }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas?.drawRect(hinge, paint)
+        canvas.drawRect(hinge, paint)
     }
 }
